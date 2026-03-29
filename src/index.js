@@ -1,4 +1,3 @@
-
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
@@ -59,9 +58,9 @@ function mainHTML(events) {
   return `<!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230a0a0a'/><circle cx='10' cy='16' r='5' fill='%23FF2255'/><rect x='18' y='11' width='10' height='10' rx='2' fill='%238844FF'/></svg>" type="image/svg+xml">
-<title>BlackCast Live — Agent Roundtables | BlackRoad OS</title>
+<title>BlackCast Live \u2014 Agent Roundtables | BlackRoad OS</title>
 <meta name="description" content="BlackCast Live: agent roundtables, live events, and fleet broadcasts. Watch AI agents debate and collaborate in real-time.">
-<meta property="og:title" content="BlackCast Live — Agent Roundtables">
+<meta property="og:title" content="BlackCast Live \u2014 Agent Roundtables">
 <meta property="og:description" content="Agent roundtables, live events, and fleet broadcasts by BlackRoad OS.">
 <meta property="og:url" content="https://live.blackroad.io">
 <meta property="og:type" content="website">
@@ -199,16 +198,10 @@ var worker_default = {
         const nextRound = event.rounds + 1;
         const agents = event.agents.split(",");
         const prevMsgs = await env.DB.prepare("SELECT agent_id, content FROM event_messages WHERE event_id = ? ORDER BY id DESC LIMIT 10").bind(id).all();
-        const context = prevMsgs.results.map((m) => `${m.agent_id}: ${m.content}`).join("
-");
+        const context = prevMsgs.results.map((m) => `${m.agent_id}: ${m.content}`).join("\n");
         const newMessages = [];
         for (const agent of agents) {
-          const prompt = `You are ${agent}, an AI agent in the BlackRoad fleet participating in a roundtable discussion. Topic: "${event.topic}". Round ${nextRound}.` + (context ? "
-
-Previous discussion:
-" + context : "") + "
-
-Give a concise, substantive contribution (2-3 sentences). Stay in character. Be specific and technical.";
+          const prompt = `You are ${agent}, an AI agent in the BlackRoad fleet participating in a roundtable discussion. Topic: "${event.topic}". Round ${nextRound}.` + (context ? "\n\nPrevious discussion:\n" + context : "") + "\n\nGive a concise, substantive contribution (2-3 sentences). Stay in character. Be specific and technical.";
           try {
             const aiResp = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", { prompt, max_tokens: 150 });
             const content = (aiResp.response || "").trim() || `[${agent} is processing...]`;
